@@ -1,0 +1,12 @@
+# CPR OpenWrt WLT — DNS hardening snippet (EXAMPLE)
+# Merge into /etc/config/dhcp (section: dnsmasq)
+
+config dnsmasq
+	option domainneeded '1'
+	option boguspriv '1'
+	option localise_queries '1'
+	option rebind_protection '1'
+	option rebind_localhost '1'
+	option noresolv '1'
+	list server '1.1.1.2'
+	list server '1.0.0.2'

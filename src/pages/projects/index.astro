@@ -1,0 +1,19 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getProjects } from "../../lib/content";
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Projects" description="Everything Custom PC Republic has in development." wide>
+	<p class="eyebrow">Projects</p>
+	<h1>What we're building</h1>
+	<ul class="grid">
+		{projects.map((project) => (
+			<li>
+				<ProjectCard project={project} />
+			</li>
+		))}
+	</ul>
+</BaseLayout>

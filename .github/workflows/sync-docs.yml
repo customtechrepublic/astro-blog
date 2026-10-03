@@ -1,0 +1,32 @@
+# Pulls OpenWrt (and other) READMEs into src/content/docs and opens a PR.
+# Requires: repository secret DOCS_SYNC_TOKEN (fine-grained PAT, read access
+# to the source repos). See docs/PIPELINES.md → "OpenWrt docs sync".
+name: Sync GitHub docs
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm run sync:docs
+        env:
+          GITHUB_TOKEN: ${{ secrets.DOCS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: chore/sync-docs
+          title: "chore(docs): sync READMEs from GitHub"
+          commit-message: "chore(docs): sync READMEs from GitHub"
+          body: Automated by `.github/workflows/sync-docs.yml`.
+          add-paths: src/content/docs

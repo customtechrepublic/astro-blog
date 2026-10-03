@@ -1,0 +1,26 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProductCard from "../../components/shop/ProductCard.astro";
+import { FEATURES } from "../../consts";
+
+const products = (await getCollection("products")).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Shop" description="Routers, secure builds and services from Custom PC Republic." wide>
+	<p class="eyebrow">CPR Shop</p>
+	<h1>{FEATURES.shop ? "Shop" : "Shop — coming soon"}</h1>
+	{!FEATURES.shop && (
+		<p class="lede">
+			<strong>The storefront isn't open yet.</strong> Here's a preview of what's planned. Prices and checkout
+			switch on when the shop launches.
+		</p>
+	)}
+	<ul class="grid">
+		{products.map((product) => (
+			<li>
+				<ProductCard product={product} />
+			</li>
+		))}
+	</ul>
+</BaseLayout>

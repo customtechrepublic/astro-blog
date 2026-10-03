@@ -1,0 +1,19 @@
+{
+	"$comment": "Repos tracked by the blog. Used by /github and scripts/sync-github-docs.mjs. `docs` lists files to pull into src/content/docs/<section>/repos/.",
+	"org": "customtechrepublic",
+	"repos": [
+		{
+			"name": "astro-blog",
+			"label": "CPR Blog",
+			"section": null,
+			"docs": []
+		},
+		{
+			"name": "openwrt-wlt",
+			"label": "OpenWrt WLT",
+			"section": "openwrt",
+			"docs": ["README.md"],
+			"$comment": "Placeholder — rename to the real OpenWrt repo(s)."
+		}
+	]
+}

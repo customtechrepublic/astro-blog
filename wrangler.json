@@ -1,11 +1,30 @@
 {
-	"name": "astro-blog",
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "cpr-blog",
+	"account_id": "f7a53ffe65d1e81b7492569090b1582f",
 	"compatibility_date": "2025-10-08",
 	"compatibility_flags": ["nodejs_compat"],
 	"main": "./dist/_worker.js/index.js",
 	"assets": {
 		"directory": "./dist",
 		"binding": "ASSETS"
+	},
+	"routes": [{ "pattern": "blog.custompcrepublic.com", "custom_domain": true }],
+	"workers_dev": true,
+	"preview_urls": true,
+	"kv_namespaces": [
+		{ "binding": "CONTACT_KV", "id": "2422730c00f9480ca78ea1f1a7d02588" },
+		{ "binding": "SESSION", "id": "92c6b3dc4a77435f847e72a105a4cca8" }
+	],
+	"send_email": [
+		{
+			"name": "CONTACT_EMAIL",
+			"allowed_destination_addresses": ["daniel@custompcrepublic.com", "ai@custompcrepublic.com"]
+		}
+	],
+	"vars": {
+		"CONTACT_TO": "daniel@custompcrepublic.com,ai@custompcrepublic.com",
+		"CONTACT_FROM": "blog@custompcrepublic.com"
 	},
 	"observability": {
 		"enabled": true

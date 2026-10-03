@@ -1,0 +1,48 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StatusBadge from "../../components/StatusBadge.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getPosts, getProjects } from "../../lib/content";
+
+export async function getStaticPaths() {
+	const projects = await getProjects();
+	return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props as { project: CollectionEntry<"projects"> };
+const { Content } = await render(project);
+const related = (await getPosts()).filter((p) => p.data.project?.id === project.id);
+---
+
+<BaseLayout title={project.data.title} description={project.data.summary}>
+	<p class="eyebrow">
+		<a href="/projects">Projects</a>
+	</p>
+	<h1>{project.data.title}</h1>
+	<p>
+		<StatusBadge status={project.data.status} />
+		{project.data.repo && (
+			<>
+				{" "}
+				· <a href={`https://github.com/${project.data.repo}`}>{project.data.repo}</a>
+			</>
+		)}
+	</p>
+	<p class="lede">
+		<strong>{project.data.summary}</strong>
+	</p>
+	<Content />
+	{related.length > 0 && (
+		<>
+			<h2>Related posts</h2>
+			<ul class="grid">
+				{related.map((post) => (
+					<li>
+						<PostCard post={post} />
+					</li>
+				))}
+			</ul>
+		</>
+	)}
+</BaseLayout>

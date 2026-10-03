@@ -1,0 +1,50 @@
+---
+interface Props {
+	command: string;
+	label?: string;
+}
+const { command, label = "Copy" } = Astro.props;
+---
+
+<div class="copy-cmd">
+	<pre><code>{command}</code></pre>
+	<button type="button" class="btn ghost" data-copy={command}>
+		{label}
+	</button>
+</div>
+
+<style>
+	.copy-cmd {
+		display: flex;
+		align-items: stretch;
+		gap: 0.5rem;
+		margin: 0.5rem 0 1.25rem;
+	}
+	.copy-cmd pre {
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		background: var(--cpr-midnight);
+	}
+	.copy-cmd button {
+		flex: none;
+		align-self: center;
+		padding: 0.4rem 0.9rem;
+		font-size: 0.8rem;
+	}
+</style>
+
+<script>
+	document.addEventListener("click", async (e) => {
+		const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("button[data-copy]");
+		if (!btn) return;
+		try {
+			await navigator.clipboard.writeText(btn.dataset.copy ?? "");
+			const prev = btn.textContent;
+			btn.textContent = "Copied ✓";
+			setTimeout(() => (btn.textContent = prev), 1500);
+		} catch {
+			btn.textContent = "Select & copy";
+		}
+	});
+</script>
