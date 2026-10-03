@@ -1,0 +1,201 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { LIMITS, TOPICS } from "../../lib/contact/validate";
+
+const turnstileKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const topicLabels: Record<(typeof TOPICS)[number], string> = {
+	general: "General question",
+	"custom-build": "Custom PC build",
+	openwrt: "OpenWrt / networking",
+	shop: "Shop & orders",
+	partnership: "Partnership / advertising",
+	support: "Support",
+};
+---
+
+<BaseLayout title="Contact" description="Get in touch with Custom PC Republic.">
+	{turnstileKey && (
+		<script slot="head" src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />
+	)}
+
+	<p class="eyebrow">Contact</p>
+	<h1>Get in touch</h1>
+	<p class="lede">
+		<strong>Builds, OpenWrt, the shop, or anything else.</strong> We read every message and reply by email.
+	</p>
+
+	<p class="alert" role="alert" hidden></p>
+
+	<form class="card contact" method="post" action="/api/contact" novalidate>
+		<div class="row">
+			<label for="name">
+				Name <span aria-hidden="true">*</span>
+			</label>
+			<input id="name" name="name" autocomplete="name" required maxlength={LIMITS.name} />
+		</div>
+		<div class="row">
+			<label for="email">
+				Email <span aria-hidden="true">*</span>
+			</label>
+			<input id="email" name="email" type="email" autocomplete="email" required maxlength={LIMITS.email} />
+		</div>
+		<div class="row">
+			<label for="topic">Topic</label>
+			<select id="topic" name="topic">
+				{TOPICS.map((t) => (
+					<option value={t}>{topicLabels[t]}</option>
+				))}
+			</select>
+		</div>
+		<div class="row">
+			<label for="message">
+				Message <span aria-hidden="true">*</span>
+			</label>
+			<textarea
+				id="message"
+				name="message"
+				rows="7"
+				required
+				minlength="10"
+				maxlength={LIMITS.message}
+			></textarea>
+		</div>
+
+		<!-- Honeypot: hidden from people, irresistible to bots. -->
+		<div class="hp" aria-hidden="true">
+			<label for="website">Website</label>
+			<input id="website" name="website" tabindex="-1" autocomplete="off" />
+		</div>
+
+		{turnstileKey && <div class="cf-turnstile" data-sitekey={turnstileKey} data-theme="dark" />}
+
+		<p class="muted small">
+			Your message is stored securely and emailed to the CPR team. We only use your details to reply.
+		</p>
+		<button class="btn" type="submit">
+			Send message
+		</button>
+	</form>
+</BaseLayout>
+
+<style>
+	.contact {
+		display: grid;
+		gap: 1.1rem;
+		margin-top: 1.5rem;
+	}
+	.row {
+		display: grid;
+		gap: 0.35rem;
+	}
+	label {
+		font-weight: 700;
+		color: var(--heading);
+	}
+	label span {
+		color: var(--cpr-ice);
+	}
+	input,
+	select,
+	textarea {
+		font: inherit;
+		font-size: 1rem;
+		color: var(--text);
+		background: var(--cpr-midnight);
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 0.7rem 0.9rem;
+		width: 100%;
+	}
+	input:focus,
+	select:focus,
+	textarea:focus {
+		border-color: var(--cpr-ice);
+		outline: none;
+		box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.25);
+	}
+	[aria-invalid="true"] {
+		border-color: var(--cpr-danger);
+	}
+	.field-error {
+		color: var(--cpr-danger);
+		font-size: 0.9rem;
+		margin: 0;
+	}
+	.hp {
+		position: absolute;
+		left: -10000px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+	.alert {
+		padding: 0.8rem 1rem;
+		border-radius: 10px;
+		border: 1px solid var(--cpr-danger);
+		color: #fff;
+		background: rgba(255, 92, 122, 0.12);
+		font-weight: 700;
+	}
+	.small {
+		font-size: 0.85rem;
+		margin: 0;
+	}
+	button {
+		justify-self: start;
+	}
+</style>
+
+<script>
+	const form = document.querySelector<HTMLFormElement>("form.contact")!;
+	const alertBox = document.querySelector<HTMLElement>(".alert")!;
+	const showAlert = (msg: string) => {
+		alertBox.textContent = msg;
+		alertBox.hidden = false;
+		alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
+	};
+
+	// Error passed back by the no-JS redirect flow.
+	const err = new URLSearchParams(location.search).get("error");
+	if (err) showAlert(err);
+
+	form.addEventListener("submit", async (e) => {
+		e.preventDefault();
+		form.querySelectorAll(".field-error").forEach((n) => n.remove());
+		form.querySelectorAll("[aria-invalid]").forEach((n) => n.removeAttribute("aria-invalid"));
+		alertBox.hidden = true;
+
+		const btn = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+		btn.disabled = true;
+		btn.textContent = "Sending…";
+		try {
+			const res = await fetch(form.action, {
+				method: "POST",
+				headers: { accept: "application/json" },
+				body: new FormData(form),
+			});
+			const data = (await res.json()) as { ok?: boolean; error?: string; errors?: Record<string, string> };
+			if (res.ok && data.ok) {
+				location.href = "/contact/thanks";
+				return;
+			}
+			for (const [field, msg] of Object.entries(data.errors ?? {})) {
+				const input = form.querySelector<HTMLElement>(`[name="${field}"]`);
+				if (!input) continue;
+				input.setAttribute("aria-invalid", "true");
+				const p = document.createElement("p");
+				p.className = "field-error";
+				p.textContent = msg;
+				input.insertAdjacentElement("afterend", p);
+			}
+			showAlert(data.error ?? "Something went wrong. Please try again.");
+		} catch {
+			showAlert("Network error. Please check your connection and try again.");
+		} finally {
+			btn.disabled = false;
+			btn.textContent = "Send message";
+			// Turnstile tokens are single-use.
+			(window as unknown as { turnstile?: { reset(): void } }).turnstile?.reset();
+		}
+	});
+</script>

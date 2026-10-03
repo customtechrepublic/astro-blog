@@ -8,15 +8,15 @@ Legend: **🔴 blocking launch** · **🟡 needed soon** · **🟢 nice to have*
 
 ## 1. Deployment & domain 🔴
 
-- [ ] **Connect the Workers project** to this repo (Cloudflare dashboard → Workers → Import from GitHub), or deploy with `npm run deploy`.
-- [ ] **Custom domain:** attach `blog.custompcrepublic.com` to the Worker (dashboard → Worker → Settings → Domains & Routes), or add to `wrangler.json`:
+Full steps: **[DEPLOY.md](DEPLOY.md)**.
 
-  ```json
-  "routes": [{ "pattern": "blog.custompcrepublic.com", "custom_domain": true }]
-  ```
-
-- [ ] **Build env vars** in Cloudflare: `PUBLIC_GITHUB_LIVE`, `GITHUB_TOKEN` (secret), and later `PUBLIC_SHOP_ENABLED`.
-- [ ] Decide whether `SESSION` KV is needed (only if server-side sessions are used for the cart). The adapter warns about it at build time.
+- [x] `wrangler.json`: account, `blog.custompcrepublic.com` custom domain, KV + email bindings.
+- [x] KV namespaces created: `cpr-blog-contact`, `cpr-blog-session`.
+- [x] Deploy workflow (`.github/workflows/deploy.yml`).
+- [ ] Add the GitHub secret **`CLOUDFLARE_API_TOKEN`**, then merge to `main` to deploy.
+- [ ] **Email:** onboard custompcrepublic.com to Email Sending, _or_ verify daniel@ and ai@ as Email Routing destinations.
+- [ ] 🟢 Turnstile on the contact form (`PUBLIC_TURNSTILE_SITE_KEY` + `TURNSTILE_SECRET`).
+- [ ] 🟢 Admin view of contact submissions (e.g. behind Cloudflare Access).
 
 ## 2. Real content 🔴
 

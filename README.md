@@ -33,19 +33,20 @@ npm run dev          # http://localhost:4321
 
 ## What's on the site
 
-| Route                   | Source                                     | Status                          |
-| ----------------------- | ------------------------------------------ | ------------------------------- |
-| `/`                     | `src/pages/index.astro`                    | ✅ Live                         |
-| `/blog`, `/blog/tags/*` | `src/content/blog/`                        | ✅ Live                         |
-| `/projects`             | `src/content/projects/`                    | ✅ Live                         |
-| `/openwrt/docs/*`       | `src/content/docs/openwrt/` + GitHub       | 🟡 Sync ready, needs real repos |
-| `/openwrt/configs/*`    | `src/content/configs/` + `public/configs/` | ✅ Live                         |
-| `/openwrt/configs.json` | Machine-readable config index              | ✅ Live                         |
-| `/github`               | `src/data/github.json` + GitHub API        | 🟡 PR list behind a flag        |
-| `/shop`                 | `src/content/products/`                    | 🟡 Preview only (flag off)      |
-| `/api/checkout`         | `src/pages/api/checkout.ts` (server)       | 🔴 No payment provider yet      |
-| `/brand`                | `public/brand/`                            | ✅ Live                         |
-| `/rss.xml`, sitemap     | Auto-generated                             | ✅ Live                         |
+| Route                   | Source                                            | Status                          |
+| ----------------------- | ------------------------------------------------- | ------------------------------- |
+| `/`                     | `src/pages/index.astro`                           | ✅ Live                         |
+| `/blog`, `/blog/tags/*` | `src/content/blog/`                               | ✅ Live                         |
+| `/projects`             | `src/content/projects/`                           | ✅ Live                         |
+| `/openwrt/docs/*`       | `src/content/docs/openwrt/` + GitHub              | 🟡 Sync ready, needs real repos |
+| `/openwrt/configs/*`    | `src/content/configs/` + `public/configs/`        | ✅ Live                         |
+| `/openwrt/configs.json` | Machine-readable config index                     | ✅ Live                         |
+| `/github`               | `src/data/github.json` + GitHub API               | 🟡 PR list behind a flag        |
+| `/shop`                 | `src/content/products/`                           | 🟡 Preview only (flag off)      |
+| `/api/checkout`         | `src/pages/api/checkout.ts` (server)              | 🔴 No payment provider yet      |
+| `/contact`              | `src/pages/contact/` + `src/pages/api/contact.ts` | 🟡 Live once email is set up    |
+| `/brand`                | `public/brand/`                                   | ✅ Live                         |
+| `/rss.xml`, sitemap     | Auto-generated                                    | ✅ Live                         |
 
 ---
 
@@ -103,6 +104,7 @@ Set at **build time** (env var or `.env`). Defaults live in `src/consts.ts`.
 
 ## Docs
 
+- **[docs/DEPLOY.md](docs/DEPLOY.md)**: Cloudflare deploy, bindings, domain, contact email
 - **[docs/PIPELINES.md](docs/PIPELINES.md)**: outstanding pipelines and go-live checklist
 - **[docs/CONTENT.md](docs/CONTENT.md)**: every collection and its fields
 - **[docs/CONTENT_STYLE.md](docs/CONTENT_STYLE.md)**: Markdown formatting rules
