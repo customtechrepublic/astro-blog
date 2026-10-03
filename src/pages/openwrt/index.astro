@@ -1,0 +1,59 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PromoSlot from "../../components/PromoSlot.astro";
+import { docSlug } from "../../lib/content";
+
+const docs = (await getCollection("docs", ({ data }) => data.section === "openwrt")).sort(
+	(a, b) => a.data.order - b.data.order,
+);
+const configs = await getCollection("configs");
+---
+
+<BaseLayout title="OpenWrt" description="CPR OpenWrt WLT: documentation and pull-ready router configs." wide>
+	<p class="eyebrow">OpenWrt WLT</p>
+	<h1>Secure routers, open firmware</h1>
+	<p class="lede">
+		<strong>Docs</strong> synced from our GitHub projects and <strong>configs</strong> you can pull straight
+		onto a router.
+	</p>
+
+	<PromoSlot slot="openwrt" />
+
+	<div class="section-head">
+		<h2>Documentation</h2>
+	</div>
+	<ul class="grid">
+		{docs.map((doc) => (
+			<li>
+				<a class="card" href={`/openwrt/docs/${docSlug(doc.id) ?? ""}`}>
+					<h3>{doc.data.title}</h3>
+					{doc.data.description && <p class="muted">{doc.data.description}</p>}
+					{doc.data.source && (
+						<p class="muted">
+							<code>from {doc.data.source.repo}</code>
+						</p>
+					)}
+				</a>
+			</li>
+		))}
+	</ul>
+
+	<div class="section-head">
+		<h2>Configs</h2>
+		<a href="/openwrt/configs">All configs →</a>
+	</div>
+	<ul class="grid">
+		{configs.map((c) => (
+			<li>
+				<a class="card" href={`/openwrt/configs/${c.id}/`}>
+					<p class="eyebrow">
+						{c.data.category} · {c.data.openwrtVersion}
+					</p>
+					<h3>{c.data.title}</h3>
+					<p class="muted">{c.data.description}</p>
+				</a>
+			</li>
+		))}
+	</ul>
+</BaseLayout>

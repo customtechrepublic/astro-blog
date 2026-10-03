@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from "astro:content";
+import StatusBadge from "../StatusBadge.astro";
+import { FEATURES } from "../../consts";
+import { formatPrice } from "../../lib/shop/money";
+
+interface Props {
+	product: CollectionEntry<"products">;
+}
+const { product } = Astro.props;
+const { name, summary, priceCents, currency, availability, images } = product.data;
+---
+
+<a class="card" href={`/shop/${product.id}/`}>
+	{images[0] && <img src={images[0]} alt="" width="96" height="96" loading="lazy" />}
+	<StatusBadge status={availability} />
+	<h3>{name}</h3>
+	<p class="muted">{summary}</p>
+	{FEATURES.shop && <p class="price">{formatPrice(priceCents, currency)}</p>}
+</a>
+
+<style>
+	img {
+		border-radius: 0;
+		display: block;
+		margin-bottom: 0.75rem;
+	}
+	h3 {
+		margin-top: 0.6rem;
+	}
+	.price {
+		font-weight: 700;
+		color: var(--cpr-signal);
+		margin: 0;
+	}
+</style>

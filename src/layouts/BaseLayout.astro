@@ -1,0 +1,35 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	type?: "website" | "article";
+	/** Use the wide (1180px) content column. */
+	wide?: boolean;
+}
+
+const { wide = false, ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead {...head} />
+		<slot name="head" />
+	</head>
+	<body>
+		<a class="skip-link btn" href="#main">
+			Skip to content
+		</a>
+		<Header />
+		<slot name="hero" />
+		<main id="main" class:list={{ wide }}>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

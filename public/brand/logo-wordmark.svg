@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 72" role="img" aria-label="Custom PC Republic">
+  <defs>
+    <linearGradient id="cpr-w" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5cc8ff"/>
+      <stop offset="1" stop-color="#1f6bff"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(4 4)">
+    <path d="M32 3 56 11v19c0 15-10.5 25.5-24 31C18.5 55.5 8 45 8 30V11Z" fill="#0a1024" stroke="url(#cpr-w)" stroke-width="3" stroke-linejoin="round"/>
+    <g fill="none" stroke="url(#cpr-w)" stroke-width="2.5"><circle cx="32" cy="18" r="6"/><circle cx="32" cy="32" r="6"/><circle cx="32" cy="46" r="5"/></g>
+    <g fill="#9fe0ff"><circle cx="32" cy="18" r="2"/><circle cx="32" cy="32" r="2"/><circle cx="32" cy="46" r="1.7"/></g>
+  </g>
+  <!-- NOTE: outline these glyphs in a vector editor before print use (see docs/BRAND.md) -->
+  <g font-family="Michroma, 'Eurostile', 'Arial Black', sans-serif" fill="#ffffff" letter-spacing="3">
+    <text x="76" y="34" font-size="22">CUSTOM PC</text>
+    <text x="76" y="62" font-size="22">REPUBLIC</text>
+  </g>
+</svg>

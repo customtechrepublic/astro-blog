@@ -1,0 +1,25 @@
+[
+	{
+		"id": "openwrt-wlt",
+		"title": "OpenWrt WLT",
+		"blurb": "Hardened router firmware profiles and pull-ready configs. Secure your network in minutes.",
+		"cta": "Browse configs",
+		"href": "/openwrt/configs",
+		"badge": "In development",
+		"image": "/brand/openwrt-badge.svg",
+		"slots": ["home", "sidebar", "post-footer", "openwrt"],
+		"active": true,
+		"sponsored": false
+	},
+	{
+		"id": "shop-coming-soon",
+		"title": "The CPR Shop is coming",
+		"blurb": "Pre-flashed routers, secure gaming builds and services.",
+		"cta": "Preview the shop",
+		"href": "/shop",
+		"badge": "Soon",
+		"slots": ["home", "post-footer"],
+		"active": true,
+		"sponsored": false
+	}
+]

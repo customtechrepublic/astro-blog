@@ -1,85 +1,72 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "./BaseLayout.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import PromoSlot from "../components/PromoSlot.astro";
+import { slugify } from "../lib/content";
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<"blog">["data"];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, author, category, tags, project } = Astro.props;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+<BaseLayout title={title} description={description} image={heroImage} type="article">
+	<article>
+		<header class="post-head">
+			<p class="eyebrow">{category}</p>
+			<h1>{title}</h1>
+			<p class="meta muted">
+				<FormattedDate date={pubDate} /> · {author}
+				{updatedDate && (
+					<span>
+						{" "}
+						· updated <FormattedDate date={updatedDate} />
+					</span>
+				)}
+				{project && (
+					<span>
+						{" "}
+						· project: <a href={`/projects/${project.id}/`}>{project.id}</a>
+					</span>
+				)}
+			</p>
+			{heroImage && <img class="hero" src={heroImage} alt="" width="1200" height="630" />}
+		</header>
+		<div class="prose">
+			<slot />
+		</div>
+		{tags.length > 0 && (
+			<p class="tags">
+				{tags.map((t) => (
+					<a href={`/blog/tags/${slugify(t)}/`}>#{t}</a>
+				))}
+			</p>
+		)}
+	</article>
+	<PromoSlot slot="post-footer" />
+</BaseLayout>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <img width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+<style>
+	.post-head {
+		margin-bottom: 2rem;
+	}
+	.post-head h1 {
+		margin-top: 0.25rem;
+	}
+	.eyebrow {
+		margin: 0;
+	}
+	.meta {
+		font-size: 0.9rem;
+	}
+	.hero {
+		margin-top: 1.5rem;
+		box-shadow: var(--glow);
+	}
+	.tags {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+		margin-top: 2rem;
+	}
+</style>

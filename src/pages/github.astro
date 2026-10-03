@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import StatusBadge from "../components/StatusBadge.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import { FEATURES, SITE } from "../consts";
+import { getRepos, getRecentPulls } from "../lib/github";
+
+const repos = await getRepos();
+const pulls = await getRecentPulls();
+---
+
+<BaseLayout
+	title="GitHub activity"
+	description="Repositories and pull requests from Custom PC Republic."
+	wide
+>
+	<p class="eyebrow">Open source</p>
+	<h1>On GitHub</h1>
+	<p>
+		Work happens in the open at
+		<a href={`https://github.com/${SITE.githubOrg}`}>
+			<strong>github.com/{SITE.githubOrg}</strong>
+		</a>
+		.
+	</p>
+
+	<div class="section-head">
+		<h2>Repositories</h2>
+	</div>
+	<ul class="grid">
+		{repos.map((r) => (
+			<li>
+				<a class="card" href={r.url}>
+					<h3>{r.label}</h3>
+					<p class="muted">
+						<code>{r.name}</code>
+					</p>
+					{r.description && <p>{r.description}</p>}
+					{r.pushedAt && (
+						<p class="muted">
+							Last push <FormattedDate date={new Date(r.pushedAt)} />
+						</p>
+					)}
+				</a>
+			</li>
+		))}
+	</ul>
+
+	<div class="section-head">
+		<h2>Pull requests</h2>
+	</div>
+	{pulls.length > 0 ? (
+		<table>
+			<thead>
+				<tr>
+					<th>PR</th>
+					<th>Repo</th>
+					<th>State</th>
+					<th>Author</th>
+					<th>Updated</th>
+				</tr>
+			</thead>
+			<tbody>
+				{pulls.map((p) => (
+					<tr>
+						<td>
+							<a href={p.url}>
+								#{p.number} {p.title}
+							</a>
+						</td>
+						<td>
+							<code>{p.repo}</code>
+						</td>
+						<td>
+							<StatusBadge status={p.state} />
+						</td>
+						<td>{p.author}</td>
+						<td>
+							<FormattedDate date={new Date(p.updatedAt)} />
+						</td>
+					</tr>
+				))}
+			</tbody>
+		</table>
+	) : (
+		<div class="card">
+			<p>
+				<strong>Pull request feed coming soon.</strong>
+			</p>
+			<p class="muted">
+				{FEATURES.githubLive
+					? "The GitHub API returned no pull requests (or was unreachable) at build time."
+					: "Enable it with PUBLIC_GITHUB_LIVE=true (and optionally GITHUB_TOKEN) at build time — see docs/PIPELINES.md."}
+			</p>
+		</div>
+	)}
+</BaseLayout>

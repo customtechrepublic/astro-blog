@@ -1,0 +1,60 @@
+---
+// Advertising / promotion slot. Content comes from src/content/promos/promos.json.
+import { FEATURES } from "../consts";
+import { getPromos } from "../lib/content";
+
+interface Props {
+	slot: "home" | "sidebar" | "post-footer" | "openwrt";
+	/** Max number of promos to show. */
+	limit?: number;
+}
+const { slot, limit = 1 } = Astro.props;
+const promos = FEATURES.promos ? (await getPromos(slot)).slice(0, limit) : [];
+---
+
+{promos.map(({ data }) => (
+	<aside class="promo" aria-label={data.sponsored ? "Sponsored" : "Promotion"}>
+		{data.image && <img src={data.image} alt="" width="72" height="72" />}
+		<div>
+			<p class="eyebrow">
+				{data.sponsored ? "Sponsored" : "From CPR"}
+				{data.badge && <span class="badge"> · {data.badge}</span>}
+			</p>
+			<h3>{data.title}</h3>
+			<p>{data.blurb}</p>
+			<a class="btn" href={data.href}>
+				{data.cta} →
+			</a>
+		</div>
+	</aside>
+))}
+
+<style>
+	.promo {
+		display: flex;
+		gap: 1.25rem;
+		align-items: flex-start;
+		margin: 2.5rem 0;
+		padding: 1.5rem;
+		border-radius: var(--radius);
+		border: 1px solid rgba(34, 227, 166, 0.35);
+		background:
+			radial-gradient(400px 200px at 0% 0%, rgba(34, 227, 166, 0.12), transparent 70%), var(--surface);
+	}
+	.promo img {
+		border-radius: 0;
+		flex: none;
+	}
+	.promo h3 {
+		margin: 0.25rem 0 0.5rem;
+	}
+	.eyebrow {
+		margin: 0;
+		color: var(--cpr-signal);
+	}
+	@media (max-width: 560px) {
+		.promo {
+			flex-direction: column;
+		}
+	}
+</style>

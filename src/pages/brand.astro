@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const colors = [
+	["Midnight", "#05070f", "Page background"],
+	["Navy", "#0a1024", "Surfaces, cards"],
+	["Navy 2", "#111a38", "Raised surfaces"],
+	["Electric", "#1f6bff", "Primary buttons, active nav"],
+	["Ice", "#5cc8ff", "Links, highlights"],
+	["Signal", "#22e3a6", "Success, promos, prices"],
+	["Amber", "#ffb547", 'Warnings, "coming soon"'],
+];
+const assets = [
+	["Logo mark", "/brand/logo-mark.svg"],
+	["Wordmark (dark bg)", "/brand/logo-wordmark.svg"],
+	["Wordmark (light bg)", "/brand/logo-wordmark-light.svg"],
+	["OpenWrt WLT badge", "/brand/openwrt-badge.svg"],
+	["Social / OG image", "/og/default.jpg"],
+];
+---
+
+<BaseLayout title="Brand kit" description="Custom PC Republic logos, colours and type." wide>
+	<p class="eyebrow">Brand kit</p>
+	<h1>Brand</h1>
+	<p>
+		<strong>Plug in. Play secure.</strong> — the shield says <em>secure</em>, the three fans say{" "}
+		<em>built</em>.
+	</p>
+
+	<div class="section-head">
+		<h2>Logos</h2>
+	</div>
+	<ul class="grid">
+		{assets.map(([label, href]) => (
+			<li class:list={["card", "asset", { light: href.includes("light") }]}>
+				<img src={href} alt={label} />
+				<p>
+					<strong>{label}</strong>
+					<br />
+					<a href={href} download>
+						Download
+					</a>
+				</p>
+			</li>
+		))}
+	</ul>
+
+	<div class="section-head">
+		<h2>Colour</h2>
+	</div>
+	<ul class="grid swatches">
+		{colors.map(([name, hex, use]) => (
+			<li class="card">
+				<span class="swatch" style={`background:${hex}`} />
+				<p>
+					<strong>{name}</strong> <code>{hex}</code>
+					<br />
+					<span class="muted">{use}</span>
+				</p>
+			</li>
+		))}
+	</ul>
+
+	<div class="section-head">
+		<h2>Type</h2>
+	</div>
+	<div class="card">
+		<h2>Michroma — display</h2>
+		<p>
+			<strong>Atkinson Hyperlegible — body.</strong> Chosen for readability, including for readers with low
+			vision.
+		</p>
+	</div>
+</BaseLayout>
+
+<style>
+	.asset img {
+		height: 96px;
+		width: auto;
+		border-radius: 0;
+	}
+	.asset.light {
+		background: #e8eefc;
+		color: #0a1024;
+	}
+	.asset.light a {
+		color: #1f6bff;
+	}
+	.swatch {
+		display: block;
+		height: 64px;
+		border-radius: 10px;
+		border: 1px solid var(--border);
+		margin-bottom: 0.75rem;
+	}
+	.swatches p {
+		margin: 0;
+	}
+</style>

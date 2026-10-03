@@ -1,0 +1,52 @@
+---
+interface Props {
+	status: string;
+}
+const { status } = Astro.props;
+const tone: Record<string, string> = {
+	idea: "muted",
+	planning: "warn",
+	"in-development": "info",
+	beta: "info",
+	released: "ok",
+	paused: "muted",
+	"coming-soon": "warn",
+	preorder: "info",
+	"in-stock": "ok",
+	"sold-out": "danger",
+	discontinued: "muted",
+	open: "ok",
+	merged: "info",
+	closed: "muted",
+};
+---
+
+<span class:list={["badge", tone[status] ?? "muted"]}>{status.replace(/-/g, " ")}</span>
+
+<style>
+	.badge {
+		display: inline-block;
+		padding: 0.1rem 0.6rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		border: 1px solid currentColor;
+	}
+	.ok {
+		color: var(--cpr-signal);
+	}
+	.info {
+		color: var(--cpr-ice);
+	}
+	.warn {
+		color: var(--cpr-warn);
+	}
+	.danger {
+		color: var(--cpr-danger);
+	}
+	.muted {
+		color: var(--text-muted);
+	}
+</style>

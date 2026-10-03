@@ -1,64 +1,116 @@
-# Astro Starter Kit: Blog
+# Custom PC Republic — Blog
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/astro-blog-starter-template)
+**Plug in. Play secure.**
 
-![Astro Template Preview](https://github.com/withastro/astro/assets/2244813/ff10799f-a816-4703-b967-c78997e8323d)
+Source for **[blog.custompcrepublic.com](https://blog.custompcrepublic.com)**: the Custom PC Republic blog, OpenWrt docs and configs, project updates, GitHub activity, and a storefront that's ready to switch on.
 
-<!-- dash-content-start -->
+Built with **[Astro 5](https://astro.build)** and deployed to **Cloudflare Workers**.
 
-Create a blog with Astro and deploy it on Cloudflare Workers as a [static website](https://developers.cloudflare.com/workers/static-assets/).
+> 📋 **What's left to make this fully functional?** See **[docs/PIPELINES.md](docs/PIPELINES.md)**, the outstanding-work checklist.
 
-Features:
+---
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-- ✅ Built-in Observability logging
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-Outside of this repo, you can start a new project with this template using [C3](https://developers.cloudflare.com/pages/get-started/c3/) (the `create-cloudflare` CLI):
+## Quick start
 
 ```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/astro-blog-starter-template
+npm install
+npm run dev          # http://localhost:4321
 ```
 
-A live public deployment of this template is available at [https://astro-blog-starter-template.templates.workers.dev](https://astro-blog-starter-template.templates.workers.dev)
+| Command             | What it does                                        |
+| ------------------- | --------------------------------------------------- |
+| `npm run dev`       | Local dev server with hot reload                    |
+| `npm run build`     | Production build to `./dist/`                       |
+| `npm run preview`   | Build, then run it in the real Workers runtime      |
+| `npm run deploy`    | Deploy to Cloudflare (`wrangler deploy`)            |
+| `npm run typecheck` | TypeScript check                                    |
+| `npm run format`    | Prettier: format everything (`format:check` for CI) |
+| `npm run lint:md`   | markdownlint on every post, doc and README          |
+| `npm run sync:docs` | Pull READMEs from GitHub into the OpenWrt docs      |
+| `npm run check`     | Build + typecheck + lint + Wrangler dry-run         |
 
-## 🚀 Project Structure
+---
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## What's on the site
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| Route                   | Source                                     | Status                          |
+| ----------------------- | ------------------------------------------ | ------------------------------- |
+| `/`                     | `src/pages/index.astro`                    | ✅ Live                         |
+| `/blog`, `/blog/tags/*` | `src/content/blog/`                        | ✅ Live                         |
+| `/projects`             | `src/content/projects/`                    | ✅ Live                         |
+| `/openwrt/docs/*`       | `src/content/docs/openwrt/` + GitHub       | 🟡 Sync ready, needs real repos |
+| `/openwrt/configs/*`    | `src/content/configs/` + `public/configs/` | ✅ Live                         |
+| `/openwrt/configs.json` | Machine-readable config index              | ✅ Live                         |
+| `/github`               | `src/data/github.json` + GitHub API        | 🟡 PR list behind a flag        |
+| `/shop`                 | `src/content/products/`                    | 🟡 Preview only (flag off)      |
+| `/api/checkout`         | `src/pages/api/checkout.ts` (server)       | 🔴 No payment provider yet      |
+| `/brand`                | `public/brand/`                            | ✅ Live                         |
+| `/rss.xml`, sitemap     | Auto-generated                             | ✅ Live                         |
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+---
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Project layout
 
-## 🧞 Commands
+```text
+├── .github/workflows/     CI (build/lint) + nightly docs sync
+├── docs/                  Project docs: pipelines, storefront, brand, style
+├── public/
+│   ├── brand/             Logos (SVG), hero image
+│   ├── configs/<slug>/    Raw OpenWrt config files people pull
+│   └── og/                Social share images
+├── scripts/               Content pipelines (GitHub README sync)
+├── src/
+│   ├── components/        UI pieces (cards, promo slot, copy button, shop/)
+│   ├── content/           ← all content lives here (see docs/CONTENT.md)
+│   │   ├── blog/          Posts (.md / .mdx)
+│   │   ├── projects/      Projects in development
+│   │   ├── docs/openwrt/  OpenWrt docs; repos/ is GENERATED by sync:docs
+│   │   ├── configs/       OpenWrt config metadata
+│   │   ├── products/      Storefront catalogue
+│   │   └── promos/        Advertising / promo slots (JSON)
+│   ├── data/github.json   Which repos to track and which READMEs to sync
+│   ├── layouts/           BaseLayout, BlogPost
+│   ├── lib/               content helpers, github.ts, shop/ provider layer
+│   ├── pages/             Routes
+│   ├── consts.ts          Site config, nav, FEATURE FLAGS
+│   └── content.config.ts  Collection schemas (frontmatter validation)
+└── templates/             Copy-paste starters for posts, configs, products
+```
 
-All commands are run from the root of the project, from a terminal:
+---
 
-| Command                           | Action                                           |
-| :-------------------------------- | :----------------------------------------------- |
-| `npm install`                     | Installs dependencies                            |
-| `npm run dev`                     | Starts local dev server at `localhost:4321`      |
-| `npm run build`                   | Build your production site to `./dist/`          |
-| `npm run preview`                 | Preview your build locally, before deploying     |
-| `npm run astro ...`               | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help`         | Get help using the Astro CLI                     |
-| `npm run build && npm run deploy` | Deploy your production site to Cloudflare        |
-| `npm wrangler tail`               | View real-time logs for all Workers              |
+## Feature flags
 
-## 👀 Want to learn more?
+Set at **build time** (env var or `.env`). Defaults live in `src/consts.ts`.
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Variable                | Default | Effect                                               |
+| ----------------------- | ------- | ---------------------------------------------------- |
+| `PUBLIC_SHOP_ENABLED`   | `false` | Show prices + buy buttons; enable `/api/checkout`    |
+| `PUBLIC_GITHUB_LIVE`    | `false` | Fetch repo stats + pull requests during build        |
+| `PUBLIC_PROMOS_ENABLED` | `true`  | Render promo / ad slots                              |
+| `GITHUB_TOKEN`          | —       | Optional. Raises GitHub API rate limits (build only) |
+
+---
+
+## Writing content
+
+1. **Copy a template** from `templates/` into the right `src/content/` folder.
+2. **Fill the frontmatter.** The build fails loudly if a field is wrong (schemas in `src/content.config.ts`).
+3. **Follow the style guide:** [docs/CONTENT_STYLE.md](docs/CONTENT_STYLE.md).
+4. Run `npm run lint:md && npm run build` before pushing.
+
+---
+
+## Docs
+
+- **[docs/PIPELINES.md](docs/PIPELINES.md)**: outstanding pipelines and go-live checklist
+- **[docs/CONTENT.md](docs/CONTENT.md)**: every collection and its fields
+- **[docs/CONTENT_STYLE.md](docs/CONTENT_STYLE.md)**: Markdown formatting rules
+- **[docs/STOREFRONT.md](docs/STOREFRONT.md)**: how the shop is wired and how to launch it
+- **[docs/BRAND.md](docs/BRAND.md)**: logos, colours, type
+
+---
 
 ## Credit
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Started from the Cloudflare/Astro blog template (based on [Bear Blog](https://github.com/HermanMartinus/bearblog/)). Body font: Atkinson Hyperlegible. Display font: Michroma.

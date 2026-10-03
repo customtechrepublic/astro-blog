@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CPR OpenWrt">
+  <rect x="4" y="18" width="56" height="30" rx="6" fill="#0a1024" stroke="#5cc8ff" stroke-width="3"/>
+  <g fill="#22e3a6"><circle cx="16" cy="33" r="3"/><circle cx="26" cy="33" r="3"/><circle cx="36" cy="33" r="3"/></g>
+  <path d="M46 18V6M54 18V9" stroke="#5cc8ff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M14 56h36" stroke="#1f6bff" stroke-width="3" stroke-linecap="round"/>
+</svg>

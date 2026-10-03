@@ -1,0 +1,76 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import StatusBadge from "../../components/StatusBadge.astro";
+import { FEATURES } from "../../consts";
+import { formatPrice } from "../../lib/shop/money";
+
+export async function getStaticPaths() {
+	const products = await getCollection("products");
+	return products.map((product) => ({ params: { slug: product.id }, props: { product } }));
+}
+
+const { product } = Astro.props as { product: CollectionEntry<"products"> };
+const { Content } = await render(product);
+const d = product.data;
+const purchasable = FEATURES.shop && (d.availability === "in-stock" || d.availability === "preorder");
+---
+
+<BaseLayout title={d.name} description={d.summary}>
+	<p class="eyebrow">
+		<a href="/shop">Shop</a> / {d.category}
+	</p>
+	<h1>{d.name}</h1>
+	<p>
+		<StatusBadge status={d.availability} /> <span class="muted">SKU {d.sku}</span>
+	</p>
+	{d.images[0] && <img src={d.images[0]} alt="" width="160" height="160" />}
+	<p class="lede">
+		<strong>{d.summary}</strong>
+	</p>
+	{FEATURES.shop && <p class="price">{formatPrice(d.priceCents, d.currency)}</p>}
+
+	<button class="btn" type="button" data-checkout={d.sku} disabled={!purchasable}>
+		{purchasable ? "Buy now" : "Not available yet"}
+	</button>
+	<p class="error muted" role="status" hidden></p>
+
+	<Content />
+</BaseLayout>
+
+<style>
+	.price {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--cpr-signal);
+	}
+	img {
+		border-radius: 0;
+	}
+</style>
+
+<script>
+	// Minimal checkout hand-off: POST the SKU to /api/checkout, follow the returned URL.
+	document.querySelectorAll<HTMLButtonElement>("button[data-checkout]").forEach((btn) => {
+		btn.addEventListener("click", async () => {
+			const status = document.querySelector<HTMLElement>(".error");
+			btn.disabled = true;
+			try {
+				const res = await fetch("/api/checkout", {
+					method: "POST",
+					headers: { "content-type": "application/json" },
+					body: JSON.stringify({ lines: [{ sku: btn.dataset.checkout, quantity: 1 }] }),
+				});
+				const data = (await res.json()) as { url?: string; error?: string };
+				if (data.url) return void (window.location.href = data.url);
+				throw new Error(data.error ?? "Checkout failed");
+			} catch (err) {
+				if (status) {
+					status.hidden = false;
+					status.textContent = (err as Error).message;
+				}
+				btn.disabled = false;
+			}
+		});
+	});
+</script>

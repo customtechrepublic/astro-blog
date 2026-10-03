@@ -1,0 +1,56 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import FormattedDate from "../../../components/FormattedDate.astro";
+
+const configs = (await getCollection("configs")).sort(
+	(a, b) => b.data.updatedDate.valueOf() - a.data.updatedDate.valueOf(),
+);
+---
+
+<BaseLayout
+	title="OpenWrt configs"
+	description="Pull-ready OpenWrt UCI configs from Custom PC Republic."
+	wide
+>
+	<p class="eyebrow">
+		<a href="/openwrt">OpenWrt</a> / configs
+	</p>
+	<h1>Config library</h1>
+	<p>
+		<strong>Every file is plain text</strong> served from this site — fetch it on the router with
+		<code>wget</code>. A machine-readable index lives at{" "}
+		<a href="/openwrt/configs.json">
+			<code>/openwrt/configs.json</code>
+		</a>
+		.
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Config</th>
+				<th>Category</th>
+				<th>OpenWrt</th>
+				<th>Files</th>
+				<th>Updated</th>
+			</tr>
+		</thead>
+		<tbody>
+			{configs.map((c) => (
+				<tr>
+					<td>
+						<a href={`/openwrt/configs/${c.id}/`}>
+							<strong>{c.data.title}</strong>
+						</a>
+					</td>
+					<td>{c.data.category}</td>
+					<td>{c.data.openwrtVersion}</td>
+					<td>{c.data.files.length}</td>
+					<td>
+						<FormattedDate date={c.data.updatedDate} />
+					</td>
+				</tr>
+			))}
+		</tbody>
+	</table>
+</BaseLayout>

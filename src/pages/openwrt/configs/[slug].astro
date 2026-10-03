@@ -1,0 +1,76 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import CopyCommand from "../../../components/CopyCommand.astro";
+import FormattedDate from "../../../components/FormattedDate.astro";
+
+export async function getStaticPaths() {
+	const configs = await getCollection("configs");
+	return configs.map((config) => ({ params: { slug: config.id }, props: { config } }));
+}
+
+const { config } = Astro.props as { config: CollectionEntry<"configs"> };
+const { Content } = await render(config);
+const site = Astro.site!;
+---
+
+<BaseLayout title={config.data.title} description={config.data.description}>
+	<p class="eyebrow">
+		<a href="/openwrt/configs">Configs</a> / {config.data.category}
+	</p>
+	<h1>{config.data.title}</h1>
+	<ul class="facts">
+		<li>
+			<strong>OpenWrt:</strong> {config.data.openwrtVersion}
+		</li>
+		<li>
+			<strong>Devices:</strong> {config.data.devices.join(", ") || "any"}
+		</li>
+		<li>
+			<strong>Updated:</strong> <FormattedDate date={config.data.updatedDate} />
+		</li>
+		{config.data.project && (
+			<li>
+				<strong>Project:</strong>{" "}
+				<a href={`/projects/${config.data.project.id}/`}>{config.data.project.id}</a>
+			</li>
+		)}
+	</ul>
+
+	<Content />
+
+	<h2>Pull it</h2>
+	<p class="muted">
+		Run on the router over SSH. <strong>Back up first</strong>, then download each file to <code>/tmp</code>,
+		<strong>review it</strong>, and merge it into the target path shown.
+	</p>
+	<CopyCommand command="sysupgrade -b /tmp/backup-$(date +%F).tar.gz" />
+	{config.data.files.map((f) => {
+		const url = new URL(f.path, site).toString();
+		const cmd = `wget -O /tmp/${f.name} ${url}`;
+		return (
+			<>
+				<h3>
+					<a href={f.path}>
+						<code>{f.name}</code>
+					</a>
+					{f.target && <span class="muted"> → {f.target}</span>}
+				</h3>
+				<CopyCommand command={cmd} />
+			</>
+		);
+	})}
+</BaseLayout>
+
+<style>
+	.facts {
+		list-style: none;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+	}
+	.facts li + li {
+		margin: 0;
+	}
+</style>
